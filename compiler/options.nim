@@ -239,7 +239,7 @@ type
     disabledSf, writeOnlySf, readOnlySf, v2Sf, stressTest
 
   TSystemCC* = enum
-    ccNone, ccGcc, ccNintendoSwitch, ccLLVM_Gcc, ccCLang, ccBcc, ccVcc,
+    ccNone, ccGcc, ccNintendoSwitch, ccLLVM_Gcc, ccCLang, ccHipcc, ccNvcc, ccBcc, ccVcc,
     ccTcc, ccEnv, ccIcl, ccIcc, ccClangCl
 
   ExceptionSystem* = enum

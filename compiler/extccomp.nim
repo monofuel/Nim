@@ -292,6 +292,8 @@ const
     nintendoSwitchGCC(),
     llvmGcc(),
     clang(),
+    hipcc(),
+    nvcc(),
     bcc(),
     vcc(),
     tcc(),
