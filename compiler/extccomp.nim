@@ -145,6 +145,20 @@ compiler clang:
   result.compilerExe = "clang"
   result.cppCompiler = "clang++"
 
+# HIPCC Compiler
+compiler hipcc:
+  result = clang()
+  result.name = "hipcc"
+  result.compilerExe = "hipcc"
+  result.cppCompiler = "hipcc"
+
+# NVCC Compiler
+compiler nvcc:
+  result = clang()
+  result.name = "nvcc"
+  result.compilerExe = "nvcc"
+  result.cppCompiler = "nvcc"
+
 # Microsoft Visual C/C++ Compiler
 compiler vcc:
   result = (
