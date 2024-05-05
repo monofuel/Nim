@@ -572,6 +572,9 @@ proc getCompileCFileCmd*(conf: ConfigRef; cfile: Cfile,
     # needs to be prepended so that --passc:-std=c++17 can override default.
     # we could avoid allocation by making cFileSpecificOptions inplace
     options = CC[c].cppXsupport & ' ' & options
+    if CC[c].name == "clang":
+      echo "using Xcompiler compile flags"
+      options = "-Xcompiler=\"" & options & "\""
     # If any C++ file was compiled, we need to use C++ driver for linking as well
     incl conf.globalOptions, optMixedMode
 
@@ -720,8 +723,11 @@ proc getLinkCmd(conf: ConfigRef; output: AbsoluteFile,
     # of all function calls in the library and where they come from.
     let mapfile = quoteShell(getNimcacheDir(conf) / RelativeFile(splitFile(output).name & ".map"))
 
-    let linkOptions = getLinkOptions(conf) & " " &
+    var linkOptions = getLinkOptions(conf) & " " &
                       getConfigVar(conf, conf.cCompiler, ".options.linker")
+    if CC[conf.cCompiler].name == "clang":
+      echo "using Xcompiler linkOptions flags"
+      linkOptions = "-Xcompiler=\"" & linkOptions & "\""
     var linkTmpl = getConfigVar(conf, conf.cCompiler, ".linkTmpl")
     if linkTmpl.len == 0:
       linkTmpl = CC[conf.cCompiler].linkTmpl
