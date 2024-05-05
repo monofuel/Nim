@@ -151,7 +151,6 @@ compiler hipcc:
   result.name = "hipcc"
   result.compilerExe = "hipcc"
   result.cppCompiler = "hipcc"
-  result.cppXsupport = "-std=c++17 -funsigned-char"
 
 # NVCC Compiler
 compiler nvcc:
@@ -159,7 +158,6 @@ compiler nvcc:
   result.name = "nvcc"
   result.compilerExe = "nvcc"
   result.cppCompiler = "nvcc"
-  result.cppXsupport = "-std=c++17 -funsigned-char"
 
 # Microsoft Visual C/C++ Compiler
 compiler vcc:
