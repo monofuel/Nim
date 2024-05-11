@@ -591,7 +591,7 @@ proc getCompileCFileCmd*(conf: ConfigRef; cfile: Cfile,
       echo "using Xcompiler compile flags"
       options = "-Xcompiler=\"" & options & "\""
       if conf.cCompiler == ccNvcc:
-        options &= "-x cu"
+        options &= " -x cu"
     # If any C++ file was compiled, we need to use C++ driver for linking as well
     incl conf.globalOptions, optMixedMode
 
