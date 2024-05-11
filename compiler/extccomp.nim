@@ -309,6 +309,21 @@ template writePrettyCmdsStderr(cmd) =
     flushDot(conf)
     stderr.writeLine(cmd)
 
+proc shouldUseXcompiler*(conf: ConfigRef): bool =
+  ## NVCC and HIPCC (when building for nvidia) require we pass compiler args in -Xcompiler=""
+  ## hipcc uses HIP_PLATFORM to determine amd / nvidia
+  ## hipcc defaults to amd if amdclang++ or hip clang is found
+  let 
+    clangPath = getEnv("HIP_CLANG_PATH", "") / "clang++"
+    amdClangPath = "/opt/rocm/bin/amdclang++"
+    defaultPlatform = if (fileExists(clangPath) or fileExists(amdClangPath)): "amd" else: "nvidia"
+    hipPlatform = getEnv("HIP_PLATFORM", defaultPlatform)
+
+  result = (
+    conf.cCompiler == ccNvcc or
+    (conf.cCompiler == ccHipcc and hipPlatform == "nvidia")
+  )
+
 proc nameToCC*(name: string): TSystemCC =
   ## Returns the kind of compiler referred to by `name`, or ccNone
   ## if the name doesn't refer to any known compiler.
@@ -572,7 +587,7 @@ proc getCompileCFileCmd*(conf: ConfigRef; cfile: Cfile,
     # needs to be prepended so that --passc:-std=c++17 can override default.
     # we could avoid allocation by making cFileSpecificOptions inplace
     options = CC[c].cppXsupport & ' ' & options
-    if CC[c].name == "clang":
+    if shouldUseXcompiler(conf):
       echo "using Xcompiler compile flags"
       options = "-Xcompiler=\"" & options & "\""
     # If any C++ file was compiled, we need to use C++ driver for linking as well
@@ -725,7 +740,7 @@ proc getLinkCmd(conf: ConfigRef; output: AbsoluteFile,
 
     var linkOptions = getLinkOptions(conf) & " " &
                       getConfigVar(conf, conf.cCompiler, ".options.linker")
-    if CC[conf.cCompiler].name == "clang":
+    if shouldUseXcompiler(conf):
       echo "using Xcompiler linkOptions flags"
       linkOptions = "-Xcompiler=\"" & linkOptions & "\""
     var linkTmpl = getConfigVar(conf, conf.cCompiler, ".linkTmpl")
